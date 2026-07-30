@@ -1,0 +1,17 @@
+# architecture docs (uncooked — kept local until polished)
+docs/
+
+# Claude Code config (local-only)
+.claude/
+
+# CLAUDE.md (uncooked — kept local until polished)
+CLAUDE.md
+
+bin/
+dist/
+*.test
+*.out
+coverage.out
+.env
+.env.local
+.claude/settings.local.json

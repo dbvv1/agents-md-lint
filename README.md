@@ -1,13 +1,13 @@
-# driftwatch
+# contextlint
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> **Your `CLAUDE.md` is lying to your agent.** driftwatch finds the paths and commands your context file claims exist — and no longer do.
+> **Your `CLAUDE.md` is lying to your agent.** contextlint finds the paths and commands your context file claims exist — and no longer do.
 
 ⭐ **Star us on GitHub** if your `CLAUDE.md` still describes a module you deleted.
 
 ```bash
-pipx install driftwatch && driftwatch check
+pipx install contextlint && contextlint check
 ```
 
 ```
@@ -40,7 +40,7 @@ matching the code.
 Non-zero exit past a threshold, so it drops into CI or a pre-commit hook:
 
 ```yaml
-- run: pipx install driftwatch && driftwatch check
+- run: pipx install contextlint && contextlint check
 ```
 
 ## Design stance
@@ -57,7 +57,7 @@ most of the test suite is cases it must stay *quiet* about — URLs, globs,
 `” ```python ”` blocks, shell comments, and a project's own CLI (which is
 rarely on `PATH` during development).
 
-Two of those were found by running driftwatch on its own `CLAUDE.md`.
+Two of those were found by running contextlint on its own `CLAUDE.md`.
 
 **Reports, never rebuilds.** Fixing the file is your job; it knows what you
 meant, and this tool doesn't.
@@ -85,14 +85,14 @@ tool cannot tell intent from absence, and reporting it is the honest behaviour.
 ## Install
 
 ```bash
-pipx install driftwatch     # or: uv tool install driftwatch
+pipx install contextlint     # or: uv tool install contextlint
 ```
 
 ```bash
-driftwatch check               # every context file under .
-driftwatch check CLAUDE.md     # one file
-driftwatch check --json        # machine-readable
-driftwatch check --threshold 3 # tolerate up to 3 findings
+contextlint check               # every context file under .
+contextlint check CLAUDE.md     # one file
+contextlint check --json        # machine-readable
+contextlint check --threshold 3 # tolerate up to 3 findings
 ```
 
 ## Honest limits

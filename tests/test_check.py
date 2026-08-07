@@ -6,7 +6,7 @@ import subprocess
 
 import pytest
 
-from driftwatch.check import check_file, find_context_files, find_repo_root
+from contextlint.check import check_file, find_context_files, find_repo_root
 
 
 @pytest.fixture
@@ -144,7 +144,7 @@ class TestReport:
 
 
 class TestSelfReferenceFalsePositives:
-    """Cases found by running driftwatch on its own CLAUDE.md.
+    """Cases found by running contextlint on its own CLAUDE.md.
 
     Both are guaranteed false positives on any tool that documents itself, and
     a linter that fires on its own README will not survive first contact.

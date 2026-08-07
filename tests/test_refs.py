@@ -7,7 +7,7 @@ than the cases it must catch.
 
 from __future__ import annotations
 
-from driftwatch.refs import RefKind, extract, extract_commands, extract_paths
+from contextlint.refs import RefKind, extract, extract_commands, extract_paths
 
 
 def values(text: str, kind: RefKind) -> list[str]:

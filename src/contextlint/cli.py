@@ -1,7 +1,7 @@
 """Command line interface.
 
-    driftwatch check [PATH]     report stale references
-    driftwatch check --json     machine-readable output
+    contextlint check [PATH]     report stale references
+    contextlint check --json     machine-readable output
 
 Exits non-zero when findings exceed the threshold, so it drops into CI or a
 pre-commit hook without a wrapper script.
@@ -73,10 +73,10 @@ def cmd_check(args: argparse.Namespace) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="driftwatch",
+        prog="contextlint",
         description="Report when the files your agent trusts no longer match the repo.",
     )
-    parser.add_argument("--version", action="version", version=f"driftwatch {__version__}")
+    parser.add_argument("--version", action="version", version=f"contextlint {__version__}")
     sub = parser.add_subparsers(dest="command", required=True)
 
     check = sub.add_parser("check", help="check context files for stale references")

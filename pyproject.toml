@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "driftwatch"
+name = "contextlint"
 version = "0.1.0"
 description = "Report when the files your agent trusts — CLAUDE.md, AGENTS.md — no longer match the repo."
 readme = "README.md"
@@ -27,13 +27,13 @@ dependencies = []
 dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]
-driftwatch = "driftwatch.cli:main"
+contextlint = "contextlint.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/openintelligence-labs/driftwatch"
+Homepage = "https://github.com/openintelligence-labs/contextlint"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/driftwatch"]
+packages = ["src/contextlint"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,4 +1,4 @@
-"""driftwatch — report when the files your agent trusts no longer match the repo."""
+"""contextlint — report when the files your agent trusts no longer match the repo."""
 
 from .check import Finding, Report, check_file, find_context_files
 from .refs import Reference, RefKind, extract

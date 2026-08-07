@@ -1,4 +1,4 @@
-# driftwatch — Design
+# contextlint — Design
 
 **Status:** design only. **Last updated:** 2026-07-30
 

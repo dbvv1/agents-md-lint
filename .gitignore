@@ -1,15 +1,8 @@
-
-# Claude Code config (local-only)
-.claude/
-
-# CLAUDE.md (uncooked — kept local until polished)
-CLAUDE.md
-
-bin/
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
 dist/
-*.test
-*.out
-coverage.out
-.env
-.env.local
-.claude/settings.local.json
+build/
+.pytest_cache/
+.ruff_cache/

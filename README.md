@@ -2,68 +2,130 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> **Your agent is confidently answering from a stale index.** driftwatch watches the artifacts your agent trusts — `CLAUDE.md`, code indexes, knowledge graphs, generated docs, cached embeddings — and tells you when they no longer match the repo.
+> **Your `CLAUDE.md` is lying to your agent.** driftwatch finds the paths and commands your context file claims exist — and no longer do.
 
 ⭐ **Star us on GitHub** if your `CLAUDE.md` still describes a module you deleted.
 
-> [!NOTE]
-> **Status: In development.**
+```bash
+pipx install driftwatch && driftwatch check
+```
+
+```
+CLAUDE.md: 5 of 6 references broken
+  CLAUDE.md:14  path: 'src/proxy/' — path does not exist
+  CLAUDE.md:18  path: 'src/main.rs' — path does not exist
+    did you mean: crates/tokenmiser/src/main.rs
+```
+
+That output is real. It is this project's sibling repo, whose context file had
+described a `src/` layout for months after the code moved to a Rust workspace.
 
 ## Why this exists
 
-Every agent workflow now depends on derived artifacts: a context file, a code index, a knowledge graph, a generated architecture doc, an embedding cache. All of them are snapshots. All of them rot. None of them tell you they've rotted.
+Every agent workflow depends on a context file, and the failure mode is the
+dangerous kind: the agent doesn't error, it *answers*. Fluently, confidently,
+from a description of your repo that stopped being true three refactors ago.
 
-The failure mode is the dangerous kind: the agent doesn't error, it answers — fluently, with citations, from a picture of your codebase that is weeks out of date. This is already the loudest complaint against the largest code-graph tools in the ecosystem: a stale index silently intercepts queries and returns confident wrong answers.
-
-There is tooling for building these artifacts and essentially none for knowing when to distrust them.
+Nobody notices, because nothing breaks loudly. The file just quietly stops
+matching the code.
 
 ## What it checks
 
-| Artifact | Drift signal |
+| Reference | Check |
 |---|---|
-| `CLAUDE.md` / `AGENTS.md` | Referenced paths, commands, and modules that no longer exist |
-| Code indexes / knowledge graphs | Commits since build; files added, deleted, or moved since |
-| Generated docs | Source files changed since the doc was written |
-| Embedding caches | Fraction of cached chunks whose source has changed |
-| Build/test commands in context files | Commands that no longer resolve or no longer pass |
+| Paths in backticks — `` `src/api/` `` | Does it exist? If it moved, where to? |
+| Commands in shell fences | Does the executable resolve? |
 
-Output is a staleness report and a non-zero exit code past a configurable threshold, so it drops into CI or a pre-commit hook.
+Non-zero exit past a threshold, so it drops into CI or a pre-commit hook:
+
+```yaml
+- run: pipx install driftwatch && driftwatch check
+```
+
+## Design stance
+
+**Cheap and deterministic.** Path resolution, `PATH` lookup, `git ls-files`.
+No LLM call, no network, no embedding pass, zero runtime dependencies. A
+staleness check that costs an API call will not be run every session, and a
+check nobody runs is worse than none.
+
+**False positives are the failure mode.** A linter that flags prose gets
+uninstalled after one run, so the extractor is deliberately conservative and
+most of the test suite is cases it must stay *quiet* about — URLs, globs,
+`~/paths`, `<placeholders>`, `$VARS`, system paths, prose in backticks,
+`” ```python ”` blocks, shell comments, and a project's own CLI (which is
+rarely on `PATH` during development).
+
+Two of those were found by running driftwatch on its own `CLAUDE.md`.
+
+**Reports, never rebuilds.** Fixing the file is your job; it knows what you
+meant, and this tool doesn't.
+
+## Measured on real repositories
+
+Run across the Open Intelligence Labs monorepo:
+
+| | |
+|---|---:|
+| Context files checked | 14 |
+| References checked | 96 |
+| Findings | 30 |
+| **False positives** | **0** |
+
+Every one of the 30 findings was verified by hand against the filesystem. The
+two most interesting: a Rust project documenting a `src/` layout that had
+become `crates/`, and a voice project listing a `console/` directory that was
+never built.
+
+Most of the rest are scaffolds whose context files describe a planned layout.
+That is arguably not "drift" — it is a file written ahead of the code — but the
+tool cannot tell intent from absence, and reporting it is the honest behaviour.
 
 ## Install
 
 ```bash
-pipx install driftwatch      # or: uv tool install driftwatch
-driftwatch check
+pipx install driftwatch     # or: uv tool install driftwatch
 ```
-
-As a skill, so the agent checks its own context before trusting it:
 
 ```bash
-npx skills add openintelligence-labs/driftwatch
+driftwatch check               # every context file under .
+driftwatch check CLAUDE.md     # one file
+driftwatch check --json        # machine-readable
+driftwatch check --threshold 3 # tolerate up to 3 findings
 ```
 
-Supported harnesses: Claude Code, Codex, Cursor, OpenCode, Gemini CLI, Copilot CLI, Aider, Cline, Continue, Amp, Kiro, OpenClaw, plus generic `.agents/skills`.
+## Honest limits
 
-## Design stance
+**This checks two things.** Paths and commands. It does not check whether your
+architecture description is still accurate, whether a documented convention is
+still followed, or whether the advice is any good — those need judgement, and
+judgement needs an LLM, which is explicitly out of scope.
 
-Drift detection must be **cheap and deterministic** — no LLM call, no network, no embedding pass. It runs on file mtimes, git history, path resolution, and content hashes. If checking staleness costs an API call, nobody will run it on every session, and a check nobody runs is worse than none.
+**Unquoted references are not checked.** "edit the main.py file" is invisible
+to it. Backticks are the signal that something is a reference rather than
+prose, and without that signal the false-positive rate is unacceptable.
 
-It reports staleness; it does not rebuild. Rebuilding is the job of whatever produced the artifact.
+**Commands are resolved, never run.** Whether `pytest` exists is checkable;
+whether it passes is not, and running commands out of a context file would be a
+code-execution hazard.
+
+**The category ceiling is low.** Developer tooling of this kind tops out in the
+low thousands of stars. This exists because it is useful and finishable, not
+because it is a growth play.
 
 ## Roadmap
 
-- [ ] Git-delta checks against artifact build timestamps
-- [ ] `CLAUDE.md` / `AGENTS.md` reference validation (paths, commands, modules)
-- [ ] Adapters for common index formats
+- [x] Path and command checks with move suggestions
+- [x] JSON output, thresholds, CI exit codes
+- [ ] Code index / knowledge graph staleness (commits since build)
+- [ ] Generated-doc staleness (source changed after doc written)
 - [ ] Embedding-cache staleness ratio
-- [ ] Configurable thresholds + CI exit codes
 - [ ] Pre-commit hook
-- [ ] Skill packaging
 
 ## Part of the Open Intelligence Labs ecosystem
 
-- [SecondBrain](https://github.com/openintelligence-labs/secondbrain) — bi-temporal knowledge graph; drift is a first-class concern there
-- [awesome-claude-md](https://github.com/openintelligence-labs/awesome-claude-md) — what belongs in a context file; driftwatch checks it's still true
+- [voiceloop](https://github.com/openintelligence-labs/voiceloop) — self-hosted voice agents
+- [TokenMiser](https://github.com/openintelligence-labs/tokenmiser) — LLM cost control
 - [actants](https://github.com/openintelligence-labs/actants) — agent SDK
 
 ## License

@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/contextlint
+      url: https://pypi.org/p/agents-md-lint
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -32,15 +32,15 @@ jobs:
       - name: Validate
         run: twine check dist/*
 
-      # The README promises `pipx install contextlint && contextlint check`.
+      # The README promises `pipx install agents-md-lint && agents-md-lint check`.
       # Install the built wheel in a clean venv and run that exact command, so
       # a broken entry point fails the release instead of shipping.
       - name: Smoke test the wheel
         run: |
           python -m venv /tmp/smoke
           /tmp/smoke/bin/pip install --quiet dist/*.whl
-          /tmp/smoke/bin/contextlint --version
-          /tmp/smoke/bin/contextlint check
+          /tmp/smoke/bin/agents-md-lint --version
+          /tmp/smoke/bin/agents-md-lint check
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

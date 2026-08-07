@@ -1,13 +1,13 @@
-# contextlint
+# agents-md-lint
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> **Your `CLAUDE.md` is lying to your agent.** contextlint finds the paths and commands your context file claims exist — and no longer do.
+> **Your `CLAUDE.md` is lying to your agent.** agents-md-lint finds the paths and commands your context file claims exist — and no longer do.
 
 ⭐ **Star us on GitHub** if your `CLAUDE.md` still describes a module you deleted.
 
 ```bash
-pipx install contextlint && contextlint check
+pipx install agents-md-lint && agents-md-lint check
 ```
 
 ```
@@ -40,7 +40,7 @@ matching the code.
 Non-zero exit past a threshold, so it drops into CI or a pre-commit hook:
 
 ```yaml
-- run: pipx install contextlint && contextlint check
+- run: pipx install agents-md-lint && agents-md-lint check
 ```
 
 ## Design stance
@@ -57,7 +57,7 @@ most of the test suite is cases it must stay *quiet* about — URLs, globs,
 `” ```python ”` blocks, shell comments, and a project's own CLI (which is
 rarely on `PATH` during development).
 
-Two of those were found by running contextlint on its own `CLAUDE.md`.
+Two of those were found by running agents-md-lint on its own `CLAUDE.md`.
 
 **Reports, never rebuilds.** Fixing the file is your job; it knows what you
 meant, and this tool doesn't.
@@ -85,14 +85,14 @@ tool cannot tell intent from absence, and reporting it is the honest behaviour.
 ## Install
 
 ```bash
-pipx install contextlint     # or: uv tool install contextlint
+pipx install agents-md-lint     # or: uv tool install agents-md-lint
 ```
 
 ```bash
-contextlint check               # every context file under .
-contextlint check CLAUDE.md     # one file
-contextlint check --json        # machine-readable
-contextlint check --threshold 3 # tolerate up to 3 findings
+agents-md-lint check               # every context file under .
+agents-md-lint check CLAUDE.md     # one file
+agents-md-lint check --json        # machine-readable
+agents-md-lint check --threshold 3 # tolerate up to 3 findings
 ```
 
 ## Honest limits

@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "contextlint"
+name = "agents-md-lint"
 version = "0.1.0"
 description = "Report when the files your agent trusts — CLAUDE.md, AGENTS.md — no longer match the repo."
 readme = "README.md"
@@ -27,13 +27,13 @@ dependencies = []
 dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]
-contextlint = "contextlint.cli:main"
+agents-md-lint = "agents_md_lint.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/openintelligence-labs/contextlint"
+Homepage = "https://github.com/openintelligence-labs/agents-md-lint"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/contextlint"]
+packages = ["src/agents_md_lint"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -27,6 +27,6 @@ jobs:
       - run: ruff check src tests
       - run: ruff format --check src tests
       - run: pytest -q
-      # Dogfood: contextlint must pass its own check, which is where two
+      # Dogfood: agents-md-lint must pass its own check, which is where two
       # guaranteed false positives were found in the first place.
-      - run: contextlint check
+      - run: agents-md-lint check

@@ -17,8 +17,9 @@ CLAUDE.md: 5 of 6 references broken
     did you mean: crates/tokenmiser/src/main.rs
 ```
 
-That output is real. It is this project's sibling repo, whose context file had
-described a `src/` layout for months after the code moved to a Rust workspace.
+That output is real. It is [TokenMiser](https://github.com/openintelligence-labs/tokenmiser),
+whose context file described a `src/` layout for months after the code moved to
+a Rust workspace under `crates/`.
 
 ## Why this exists
 
@@ -74,8 +75,8 @@ Run across the Open Intelligence Labs monorepo:
 
 Every one of the 30 findings was verified by hand against the filesystem. The
 two most interesting: a Rust project documenting a `src/` layout that had
-become `crates/`, and a voice project listing a `console/` directory that was
-never built.
+become `crates/`, and a project listing a `console/` directory that was never
+built.
 
 Most of the rest are scaffolds whose context files describe a planned layout.
 That is arguably not "drift" — it is a file written ahead of the code — but the
@@ -124,7 +125,6 @@ because it is a growth play.
 
 ## Part of the Open Intelligence Labs ecosystem
 
-- [voiceloop](https://github.com/openintelligence-labs/voiceloop) — self-hosted voice agents
 - [TokenMiser](https://github.com/openintelligence-labs/tokenmiser) — LLM cost control
 - [actants](https://github.com/openintelligence-labs/actants) — agent SDK
 

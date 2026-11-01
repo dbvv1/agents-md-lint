@@ -56,6 +56,32 @@ class TestPathFalsePositives:
     def test_placeholders_are_ignored(self):
         assert values("run in `<your-repo>`", RefKind.PATH) == []
 
+    def test_embedded_placeholders_are_not_concrete_paths(self):
+        tokens = [
+            "domains/<领域>/",
+            "src/<module>/config.py",
+            "docs/<name>.md",
+            "hn.algolia.com/api/v1/items/<id>",
+            "arxiv.org/html/<id>",
+        ]
+        for token in tokens:
+            assert values(f"see `{token}`", RefKind.PATH) == []
+
+    def test_placeholder_does_not_hide_an_adjacent_real_reference(self):
+        refs = extract_paths("intro\n`domains/<领域>/` and `src/missing.py`")
+        assert [(ref.value, ref.line_no) for ref in refs] == [("src/missing.py", 2)]
+
+    def test_dotted_directories_and_relative_paths_remain_checkable(self):
+        tokens = ["src.v2/missing.py", "example.com/config.py", "./src/gone.py", "../x.py"]
+        for token in tokens:
+            assert values(f"see `{token}`", RefKind.PATH) == [token]
+
+    def test_ambiguous_scheme_less_address_remains_visible(self):
+        # Without a scheme or placeholder this is also a legal repo-relative
+        # filename. Do not erase it merely because the first component has dots.
+        token = "export.arxiv.org/api/query?id_list="
+        assert values(f"see `{token}`", RefKind.PATH) == [token]
+
     def test_shell_variables_are_ignored(self):
         assert values("set `$HOME/bin`", RefKind.PATH) == []
 

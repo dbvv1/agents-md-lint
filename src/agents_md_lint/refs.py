@@ -62,6 +62,10 @@ _NOT_A_PATH = re.compile(
     re.VERBOSE,
 )
 
+# A template segment is not a concrete repo path, including when nested in a
+# longer path. Keep this path-only: command extraction has its own contract.
+_PLACEHOLDER = re.compile(r"<[^<>/\s]+>")
+
 # Extensions that indicate a file reference even without a separator.
 _FILE_EXT = re.compile(
     r"\.(?:py|js|ts|tsx|jsx|rs|go|java|rb|c|h|cpp|hpp|sh|bash|zsh|fish"
@@ -81,7 +85,7 @@ def _looks_like_path(token: str) -> bool:
     """Is this token a claim that a repo path exists?"""
     if not token or token.isspace():
         return False
-    if _NOT_A_PATH.search(token):
+    if _NOT_A_PATH.search(token) or _PLACEHOLDER.search(token):
         return False
     if " " in token.strip():
         # Multi-word backtick content is prose or a command, not a path.

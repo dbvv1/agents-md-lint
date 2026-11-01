@@ -40,6 +40,10 @@ def _as_dict(report: Report) -> dict:
 def cmd_check(args: argparse.Namespace) -> int:
     target = Path(args.path).resolve()
 
+    if not target.exists():
+        print(f"input path does not exist: {target}", file=sys.stderr)
+        return 2
+
     if target.is_file():
         files = [target]
         root = find_repo_root(target.parent)

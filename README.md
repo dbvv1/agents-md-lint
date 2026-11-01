@@ -37,7 +37,9 @@ matching the code.
 | Paths in backticks — `` `src/api/` `` | Does it exist? If it moved, where to? |
 | Commands in shell fences | Does the executable resolve? |
 
-Non-zero exit past a threshold, so it drops into CI or a pre-commit hook:
+Non-zero exit past a threshold, so it drops into CI or a pre-commit hook.
+An input path that does not exist exits 2; an existing directory without any
+context files remains a successful no-op (reported on stderr):
 
 ```yaml
 - run: pipx install agents-md-lint && agents-md-lint check
